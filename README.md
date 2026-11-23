@@ -50,6 +50,15 @@ Get a free Gemini key at https://aistudio.google.com/apikey and set `GEMINI_API_
 
 Open http://localhost:8000.
 
+## Deploy on Render (free)
+
+1. Push this folder to a public GitHub repository.
+2. On render.com choose **New → Blueprint** and pick the repository. Render reads `render.yaml`.
+3. Paste your `GEMINI_API_KEY` when asked, then click **Apply**.
+4. Your public URL appears on the service page (`https://skill-gap-coach-xxxx.onrender.com`).
+
+The free tier sleeps after 15 minutes without visitors, so the first visit after that takes about 30–60 seconds to wake up.
+
 ## Deploy on Railway
 
 1. Push this folder to a public GitHub repository.
