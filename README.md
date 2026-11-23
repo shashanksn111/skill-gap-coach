@@ -2,7 +2,7 @@
 
 An AI tool that tells a student which skills they're missing for a target job role, and what to do about it in the next 4 weeks.
 
-**Live demo:** _add your Railway URL here_ · **Demo video:** _add your link here_
+**Live demo:** https://skill-gap-coach.onrender.com (free tier: the first visit after a quiet spell takes ~30–60 s to wake up) · **Demo video:** _add your link here_
 
 ## The problem
 
