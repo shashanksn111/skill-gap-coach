@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Skill Gap Coach</title>
+<style>
+  :root {
+    --bg: #f7f7f5; --card: #ffffff; --text: #1d1d1f; --muted: #6b6b70; --line: #e4e4e0;
+    --accent: #2f6fde; --accent-soft: #e8f0fd; --good: #1f8a4c; --good-soft: #e5f4eb;
+    --warn: #b4580b; --warn-soft: #fcefe2; --bad: #c0392b;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #141416; --card: #1d1d20; --text: #ececee; --muted: #9a9aa2; --line: #2e2e33;
+      --accent: #6c9df5; --accent-soft: #1f2a40; --good: #4cc47e; --good-soft: #17301f;
+      --warn: #f0a25a; --warn-soft: #3a2716; --bad: #ef6b5d;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+         font: 16px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 32px 16px 64px; }
+  header h1 { margin: 0 0 4px; font-size: 1.9rem; letter-spacing: -0.02em; }
+  header p { margin: 0 0 24px; color: var(--muted); }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 20px; margin-bottom: 16px; }
+  label { display: block; font-weight: 600; margin: 14px 0 6px; font-size: .95rem; }
+  label small { font-weight: 400; color: var(--muted); }
+  input[type=text], textarea { width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px;
+    background: var(--bg); color: var(--text); font: inherit; }
+  textarea { min-height: 150px; resize: vertical; }
+  input:focus, textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .or { color: var(--muted); font-size: .9rem; margin: 8px 0; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .chip { border: 1px solid var(--line); background: transparent; color: var(--muted); border-radius: 999px;
+          padding: 4px 10px; font-size: .85rem; cursor: pointer; }
+  .chip:hover { border-color: var(--accent); color: var(--accent); }
+  button.primary { margin-top: 18px; width: 100%; padding: 13px; border: 0; border-radius: 10px;
+    background: var(--accent); color: #fff; font: 600 1rem system-ui, sans-serif; cursor: pointer; }
+  button.primary:disabled { opacity: .6; cursor: wait; }
+  .error { color: var(--bad); margin-top: 12px; }
+  .hidden { display: none; }
+  .score { display: flex; align-items: center; gap: 18px; }
+  .ring { --p: 0; width: 92px; height: 92px; flex: none; border-radius: 50%; display: grid; place-items: center;
+          background: conic-gradient(var(--accent) calc(var(--p) * 1%), var(--line) 0); }
+  .ring span { width: 74px; height: 74px; border-radius: 50%; background: var(--card); display: grid; place-items: center;
+               font-weight: 700; font-size: 1.4rem; }
+  h2 { font-size: 1.15rem; margin: 0 0 12px; }
+  ul.list { list-style: none; padding: 0; margin: 0; }
+  ul.list li { padding: 10px 0; border-top: 1px solid var(--line); }
+  ul.list li:first-child { border-top: 0; padding-top: 0; }
+  .tag { display: inline-block; font-size: .75rem; font-weight: 600; padding: 2px 8px; border-radius: 999px; margin-left: 6px; }
+  .must { background: var(--warn-soft); color: var(--warn); }
+  .nice { background: var(--accent-soft); color: var(--accent); }
+  .have { color: var(--good); font-weight: 600; }
+  .sub { color: var(--muted); font-size: .92rem; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 680px) { .grid { grid-template-columns: 1fr; } }
+  .week { border-left: 3px solid var(--accent); padding: 4px 0 4px 12px; margin-bottom: 14px; }
+  .week b { display: block; }
+  .week ul { margin: 6px 0 0; padding-left: 18px; }
+  details { border-top: 1px solid var(--line); padding: 10px 0; }
+  details:first-of-type { border-top: 0; padding-top: 0; }
+  summary { cursor: pointer; font-weight: 600; }
+  footer { color: var(--muted); font-size: .85rem; text-align: center; margin-top: 24px; }
+  .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid #fff; border-right-color: transparent;
+             border-radius: 50%; animation: spin .8s linear infinite; vertical-align: -2px; margin-right: 8px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Skill Gap Coach</h1>
+    <p>Find out which skills you're missing for the job you want, and get a 4-week plan to close the gap.</p>
+  </header>
+
+  <form id="form" class="card">
+    <label for="role">Target job role</label>
+    <input id="role" name="role" type="text" placeholder="e.g. Data Analyst" required maxlength="200">
+    <div class="chips">
+      <button type="button" class="chip">Data Analyst</button>
+      <button type="button" class="chip">Frontend Developer</button>
+      <button type="button" class="chip">Backend Developer (Java)</button>
+      <button type="button" class="chip">Machine Learning Engineer</button>
+      <button type="button" class="chip">DevOps Engineer</button>
+    </div>
+
+    <label for="resume_text">Your resume or skills</label>
+    <textarea id="resume_text" name="resume_text" maxlength="12000"
+      placeholder="Paste your resume, or just list your education, skills, projects and internships."></textarea>
+    <div class="or">or upload a PDF: <input id="resume_pdf" name="resume_pdf" type="file" accept="application/pdf"></div>
+
+    <label for="job_description">Job description <small>(optional, for a sharper analysis)</small></label>
+    <textarea id="job_description" name="job_description" maxlength="12000" style="min-height:100px"
+      placeholder="Paste a real job posting from LinkedIn, Naukri, etc."></textarea>
+
+    <button class="primary" id="go" type="submit">Analyse my skill gap</button>
+    <div class="error" id="error"></div>
+  </form>
+
+  <section id="result" class="hidden">
+    <div class="card score">
+      <div class="ring" id="ring"><span id="scoreNum">0</span></div>
+      <div><h2 id="roleTitle" style="margin-bottom:4px"></h2><div class="sub" id="roleSummary"></div></div>
+    </div>
+    <div class="grid">
+      <div class="card"><h2>Skills you're missing</h2><ul class="list" id="missing"></ul></div>
+      <div class="card"><h2>Skills you already have</h2><ul class="list" id="have"></ul></div>
+    </div>
+    <div class="card"><h2>Your 4-week plan</h2><div id="plan"></div></div>
+    <div class="card"><h2>Likely interview questions</h2><div id="questions"></div></div>
+    <div class="card"><h2>Resume tips</h2><ul class="list" id="tips"></ul></div>
+  </section>
+
+  <footer>AI-generated guidance. Check it against real job postings before you act on it.<br>
+    Don't include phone numbers, addresses or other private details: your input is sent to an AI service to be analysed.</footer>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+document.querySelectorAll(".chip").forEach((c) => c.onclick = () => { $("role").value = c.textContent; });
+
+$("form").onsubmit = async (e) => {
+  e.preventDefault();
+  $("error").textContent = "";
+  const fd = new FormData($("form"));
+  if (!$("resume_pdf").files.length) fd.delete("resume_pdf");
+  if (!fd.get("resume_text").trim() && !$("resume_pdf").files.length) {
+    $("error").textContent = "Paste your resume or upload a PDF."; return;
+  }
+  const btn = $("go");
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Analysing… this takes about 20–40 seconds';
+  try {
+    const res = await fetch("/api/analyze", { method: "POST", body: fd });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.detail || `Request failed (${res.status})`);
+    render(data, fd.get("role"));
+  } catch (err) {
+    $("error").textContent = err.message;
+  } finally {
+    btn.disabled = false; btn.textContent = "Analyse my skill gap";
+  }
+};
+
+function render(d, role) {
+  const score = Math.max(0, Math.min(100, d.match_score | 0));
+  $("ring").style.setProperty("--p", score);
+  $("scoreNum").textContent = score + "%";
+  $("roleTitle").textContent = `Readiness for ${role}`;
+  $("roleSummary").textContent = d.role_summary;
+  $("missing").innerHTML = d.skills_missing.map((s) => `<li><b>${esc(s.skill)}</b>
+    <span class="tag ${s.importance === "must-have" ? "must" : "nice"}">${esc(s.importance)}</span>
+    <div class="sub">${esc(s.why)}</div></li>`).join("") || "<li class='sub'>No major gaps found.</li>";
+  $("have").innerHTML = d.skills_have.map((s) => `<li><span class="have">✓ ${esc(s.skill)}</span>
+    <div class="sub">${esc(s.evidence)}</div></li>`).join("") || "<li class='sub'>None found in the resume yet.</li>";
+  $("plan").innerHTML = d.plan.map((w) => `<div class="week"><b>Week ${esc(w.week)}: ${esc(w.focus)}</b>
+    <ul>${w.tasks.map((t) => `<li>${esc(t)}</li>`).join("")}</ul></div>`).join("");
+  $("questions").innerHTML = d.interview_questions.map((q) => `<details><summary>${esc(q.question)}</summary>
+    <div class="sub" style="margin-top:6px">Tip: ${esc(q.tip)}</div></details>`).join("");
+  $("tips").innerHTML = d.resume_tips.map((t) => `<li>${esc(t)}</li>`).join("");
+  $("result").classList.remove("hidden");
+  $("result").scrollIntoView({ behavior: "smooth" });
+}
+</script>
+</body>
+</html>
